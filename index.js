@@ -24,18 +24,33 @@ async function run() {
     const appointmentOptionCollection = client
       .db("hasanDental")
       .collection("appointmentOptions");
-    const bookingCollection = client.db("hasanDental").collection("bookings");
+    const bookingsCollection = client.db("hasanDental").collection("bookings");
 
+    // Use Aggregate to query multiple collection nd thwn merge data
     app.get("/appointmentOptions", async (req, res) => {
+      const date = req.query.date;
+      console.log(date);
       const query = {};
       const options = await appointmentOptionCollection.find(query).toArray();
-      res.send(options);
+      const bookingQuery = { appointmentDate: date };
+      const alreadyBooked = await bookingsCollection
+        .find(bookingQuery)
+        .toArray();
+
+      // code carefully
+      options.forEach((option) => {
+        const optionBooked = alreadyBooked.filter(
+          (book) => book.treatment === option.name
+        );
+        const bookedSlots = optionBooked.map((book) => book.slot);
+        console.log(option.name, bookedSlots);
+      });
+      res.send();
     });
 
     app.post("/bookings", async (req, res) => {
       const booking = req.body;
-      console.log(booking);
-      const result = await bookingCollection.insertOne(booking);
+      const result = await bookingsCollection.insertOne(booking);
       res.send(result);
     });
   } finally {
