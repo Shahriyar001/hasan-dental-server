@@ -85,6 +85,13 @@ async function run() {
       res.send(users);
     });
 
+    app.get("/users/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const user = await usersCollection.findOne(query);
+      res.send({ isAdmin: user?.role === "admin" });
+    });
+
     app.post("/users", async (req, res) => {
       const user = req.body;
       const result = await usersCollection.insertOne(user);
@@ -92,8 +99,8 @@ async function run() {
     });
 
     app.put("/users/admin/:id", async (req, res) => {
-      // console.log(req.query.email);
-      // const decodedEmail = req.query.email;
+      // console.log(req.params.email);
+      // const decodedEmail = req.params.email;
       // const query = { email: decodedEmail };
       // const user = await usersCollection.findOne(query);
 
