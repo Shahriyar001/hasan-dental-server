@@ -139,7 +139,7 @@ async function run() {
       const options =
         await appointmentOptionCollection.estimatedDocumentCount();
       const bookings = await bookingsCollection.estimatedDocumentCount();
-      console.log(users);
+      // console.log(users);
 
       // this is not the best way
       // const payment = await paymentCollection.find().toArray();
